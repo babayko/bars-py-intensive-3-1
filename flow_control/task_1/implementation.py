@@ -1,6 +1,9 @@
 def get_numbers():
-    """Возвращает все числа от 1000 до 2000, которые делятся на 7, но не кратны 5
+    values = []
+    for value in range(1000, 2001, 1):
+        if value % 7 == 0 and value % 5 != 0:
+            values.append(value)
+    return values
 
-    Returns: итерируемый объект с нужными числами
-    """
-    raise NotImplementedError
+
+print(get_numbers())
