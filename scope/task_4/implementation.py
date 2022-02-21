@@ -10,9 +10,12 @@ def open_and_close_file(file_path):
     """
     open = bad_open
 
-    del open
-    import builtins
-    open = builtins.open
+    def correct_open():
+        nonlocal open
+        import builtins
+        open = builtins.open
+
+    correct_open()
 
     f = open(file_path, 'r')
     f.close()
