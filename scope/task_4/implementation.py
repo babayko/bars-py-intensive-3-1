@@ -9,10 +9,10 @@ def open_and_close_file(file_path):
         file_path: путь до файла
     """
     open = bad_open
-    
+
     del open
     import builtins
     open = builtins.open
-    
+
     f = open(file_path, 'r')
     f.close()
