@@ -25,8 +25,3 @@ def decorator_maker(times, delay):
                     time.sleep(delay)
         return wrapper
     return decorator
-
-
-if __name__ == '__main__':
-    new_factorial = decorator_maker(3, 0)(specific_func)
-    print(new_factorial())
