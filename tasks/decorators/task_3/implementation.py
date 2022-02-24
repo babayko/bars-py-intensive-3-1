@@ -25,8 +25,13 @@ def count_func():
 
 
 if __name__ == '__main__':
-    count_func()
-    count_func()
-    count_func()
-    count_func()
-    print(count_func())
+    new_some_func = counter(some_func())
+    new_some_func()
+    new_some_func()
+    new_some_func()
+    print(new_some_func())
+    # count_func()
+    # count_func()
+    # count_func()
+    # count_func()
+    # print(count_func())
