@@ -1,5 +1,9 @@
-def copy_dict(origin_dict: dict) -> dict:
+from copy import deepcopy
+
+
+def copy_dict(origin_dict):
     """
     Функция возвращает копию словаря.
     """
-    raise NotImplementedError
+
+    return deepcopy(origin_dict)
