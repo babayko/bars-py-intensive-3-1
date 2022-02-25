@@ -7,24 +7,28 @@ class Multiplier:
         return int(self.value)
 
     def __add__(self, other):
-        if isinstance(other, Multiplier):
+        if not isinstance(other, Multiplier):
+            raise TypeError
 
-            return Multiplier(self.value + other.value)
+        return Multiplier(self.value + other.value)
 
     def __sub__(self, other):
-        if isinstance(other, Multiplier):
+        if not isinstance(other, Multiplier):
+            raise TypeError
 
-            return Multiplier(self.value - other.value)
+        return Multiplier(self.value - other.value)
 
     def __mul__(self, other):
-        if isinstance(other, Multiplier):
+        if not isinstance(other, Multiplier):
+            raise TypeError
 
-            return Multiplier(self.value * other.value)
+        return Multiplier(self.value * other.value)
 
     def __truediv__(self, other):
-        if isinstance(other, Multiplier):
+        if not isinstance(other, Multiplier):
+            raise TypeError
 
-            return Multiplier(self.value / other.value)
+        return Multiplier(self.value / other.value)
 
 
 class Hundred(Multiplier):
