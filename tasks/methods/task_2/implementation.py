@@ -8,7 +8,7 @@ class ClassFather:
         self._name = 'as yet unnamed'
 
     def ___str___(self):
-        
+
         return str(f'{self._name}')
 
     def register(self):

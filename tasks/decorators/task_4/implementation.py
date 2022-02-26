@@ -1,4 +1,4 @@
-from tasks.common import specific_func, MyException
+from tasks.common import MyException
 import time
 
 
@@ -22,5 +22,7 @@ def decorator_maker(times, delay):
                 except Exception:
                     time.sleep(delay)
             raise MyException
+
         return wrapper
+
     return decorator
