@@ -10,28 +10,10 @@ def counter(func):
     """
     counter = 0
 
-    def wrapped():
+    def wrapped(*args):
         nonlocal counter
-        func()
+        func(*args)
         counter += 1
         return counter
 
     return wrapped
-
-
-@counter
-def count_func():
-    return some_func()
-
-
-if __name__ == '__main__':
-    new_some_func = counter(some_func())
-    new_some_func()
-    new_some_func()
-    new_some_func()
-    print(new_some_func())
-    # count_func()
-    # count_func()
-    # count_func()
-    # count_func()
-    # print(count_func())

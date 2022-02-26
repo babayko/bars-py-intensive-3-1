@@ -9,10 +9,10 @@ class ClassFather:
         self._registered = False
 
     def register(self):
-        if not isinstance(self, (User1, User2)):
+        if not isinstance(self, ClassFather):
             raise MyException
         self._registered = True
-
+        __import__('pdb').set_trace()
         return ClassFather.registered_list.append(self)
 
     def get_name(self):

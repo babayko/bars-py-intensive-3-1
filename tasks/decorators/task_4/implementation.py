@@ -13,15 +13,14 @@ def decorator_maker(times, delay):
         валидное значение (при вызове bool() -> True)
     """
     def decorator(func):
-        def wrapper(*args, **kargs):
-            for step_ in range(1, times + 1, 1):
+        def wrapper(*args, **kwargs):
+            for _ in range(1, times + 1, 1):
                 try:
-                    result = func()
-                    if result is not None:
+                    result = func(*args, **kwargs)
+                    if result:
                         return result
-                except AssertionError:
-                    if step_ == times:
-                        raise MyException
+                except Exception:
                     time.sleep(delay)
+            raise MyException
         return wrapper
     return decorator
