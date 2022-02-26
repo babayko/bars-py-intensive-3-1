@@ -6,17 +6,24 @@ class ClassFather:
 
     def __init__(self):
         self._name = 'as yet unnamed'
-        self._registered = False
+
+    def ___str___(self):
+        
+        return str(f'{self._name}')
 
     def register(self):
-        if not isinstance(self, ClassFather):
+        """ Регистрация только для наследника класса ClassFather """
+        if (self.__class__ == ClassFather or not
+                issubclass(self.__class__, ClassFather)):
             raise MyException
-        self._registered = True
-        __import__('pdb').set_trace()
+
         return ClassFather.registered_list.append(self)
 
     def get_name(self):
-        if self._registered is not True:
+        """ Возвращаем _name если наследник зарегистрирован, иначе - ошибку """
+        if (self.__class__ == ClassFather or not
+                issubclass(self.__class__, ClassFather) or
+                self not in self.registered_list):
             raise MyException
 
         return self._name
