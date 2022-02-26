@@ -27,8 +27,12 @@ class Multiplier:
     def __truediv__(self, other):
         if not isinstance(other, Multiplier):
             raise TypeError
+        try:
+            result = Multiplier(self.value / other.value)
+        except ZeroDivisionError:
+            raise Exception
 
-        return Multiplier(self.value / other.value)
+        return result
 
 
 class Hundred(Multiplier):
