@@ -23,15 +23,27 @@ class ClassFather:
         """ Возвращаем _name если наследник зарегистрирован, иначе - ошибку """
         if (self.__class__ == ClassFather or not
                 issubclass(self.__class__, ClassFather) or
-                self not in self.registered_list):
+                self not in ClassFather.registered_list):
             raise MyException
 
         return self._name
 
 
 class User1(ClassFather):
+
+    def close_access(self):
+        """ Закрываем доступ к регистрации из экземпляра класса """
+        raise AttributeError
+
+    registered_list = property(close_access)
     _name = ''
 
 
 class User2(ClassFather):
+
+    def close_access(self):
+        """ Закрываем доступ к регистрации из экземпляра класса """
+        raise AttributeError
+
+    registered_list = property(close_access)
     _name = ''
