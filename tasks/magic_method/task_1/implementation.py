@@ -38,16 +38,25 @@ class Multiplier:
 class Hundred(Multiplier):
     """Множитель на 100"""
     def __init__(self, value):
-        self.value = value * 100
+        if type(value) == int:
+            self.value = value * 100
+        else:
+            raise TypeError
 
 
 class Thousand(Multiplier):
     """Множитель на 1 000"""
     def __init__(self, value):
-        self.value = value * 1000
+        if type(value) == int:
+            self.value = value * 1000
+        else:
+            raise TypeError
 
 
 class Million(Multiplier):
     """Множитель на 1 000 000"""
     def __init__(self, value):
-        self.value = value * 1000000
+        if type(value) == int:
+            self.value = value * 1000000
+        else:
+            raise TypeError
