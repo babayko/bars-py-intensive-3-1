@@ -4,29 +4,21 @@ from tasks.common import MyException
 class ClassFather:
     registered_list = []
 
-    def __init__(self):
-        self._name = 'as yet unnamed'
-
-    def ___str___(self):
-
-        return str(f'{self._name}')
-
-    def register(self):
+    @classmethod
+    def register(cls):
         """ Регистрация только для наследника класса ClassFather """
-        if (self.__class__ == ClassFather or not
-                issubclass(self.__class__, ClassFather)):
+        if cls == ClassFather or not issubclass(cls, ClassFather):
             raise MyException
 
-        return ClassFather.registered_list.append(self)
+        return ClassFather.registered_list.append(cls)
 
-    def get_name(self):
+    @classmethod
+    def get_name(cls):
         """ Возвращаем _name если наследник зарегистрирован, иначе - ошибку """
-        if (self.__class__ == ClassFather or not
-                issubclass(self.__class__, ClassFather) or
-                self not in ClassFather.registered_list):
+        if (cls == ClassFather or not issubclass(cls, ClassFather) or
+                cls not in ClassFather.registered_list):
             raise MyException
-
-        return self._name
+        return cls._name
 
 
 class User1(ClassFather):
@@ -36,7 +28,7 @@ class User1(ClassFather):
         raise AttributeError
 
     registered_list = property(close_access)
-    _name = ''
+    _name = ' '
 
 
 class User2(ClassFather):
@@ -46,4 +38,4 @@ class User2(ClassFather):
         raise AttributeError
 
     registered_list = property(close_access)
-    _name = ''
+    _name = ' '
