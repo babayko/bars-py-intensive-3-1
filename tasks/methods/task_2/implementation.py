@@ -22,20 +22,20 @@ class ClassFather:
 
 
 class User1(ClassFather):
+    _name = 'Max'
 
     def close_access(self):
         """ Закрываем доступ к регистрации из экземпляра класса """
         raise AttributeError
 
     registered_list = property(close_access)
-    _name = ' '
 
 
 class User2(ClassFather):
-
+    _name = 'Dja'
+    
     def close_access(self):
         """ Закрываем доступ к регистрации из экземпляра класса """
         raise AttributeError
 
     registered_list = property(close_access)
-    _name = ' '
