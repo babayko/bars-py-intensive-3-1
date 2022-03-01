@@ -33,7 +33,7 @@ class User1(ClassFather):
 
 class User2(ClassFather):
     _name = 'Dja'
-    
+
     def close_access(self):
         """ Закрываем доступ к регистрации из экземпляра класса """
         raise AttributeError
