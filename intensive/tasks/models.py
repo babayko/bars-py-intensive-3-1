@@ -1,10 +1,6 @@
 from django.db import models
 from django.db.models import Manager
 
-from django.db import connection, reset_queries
-import time
-import functools
-
 
 class WorkerManager(models.Manager):
     """
@@ -47,7 +43,7 @@ class Department(models.Model):
         """
         queryset = cls.objects.filter(worker__startwork_date__isnull=False,
                                       worker__tab_num__gt=0).count()
-
+        print(queryset)
         return queryset
 
     @classmethod
