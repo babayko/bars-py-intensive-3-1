@@ -1,6 +1,10 @@
 from django.db import models
 from django.db.models import Manager
 
+from django.db import connection, reset_queries
+import time
+import functools
+
 
 class WorkerManager(models.Manager):
     """
@@ -12,7 +16,7 @@ class WorkerManager(models.Manager):
         принятия на работу и с не пустым табельным номером отличным от 0
         """
 
-        return super().get_queryset().filter(startwork_date__isnull=False).exclude(tab_num__exact=0)
+        return super().get_queryset().filter(startwork_date__isnull=False, tab_num__gt=0)
 
     def get_workers_info(self):
         """
@@ -24,9 +28,7 @@ class WorkerManager(models.Manager):
         list_lists = super().get_queryset().values_list(
             'first_name', 'last_name', 'tab_num', 'department__name'
                            ).order_by('last_name', 'first_name')
-        result_list = [nested_list for nested_list in list_lists]
-        result = [(num[0] + ' ' + num[1] + ', ' + str(num[2]) + ', ' + num[3]) for num in result_list]
-
+        result = [(num[0] + ' '.join(num[1]) + ', ' + str(num[2]) + ', ' + num[3]) for num in list_lists]
         return result
 
 
@@ -43,8 +45,9 @@ class Department(models.Model):
         """
         Количество активных сотрудников подразделения
         """
-        queryset = cls.objects.select_related().filter(worker__startwork_date__isnull=False,
-                                                       worker__tab_num__gt=0).count()
+        queryset = cls.objects.filter(worker__startwork_date__isnull=False,
+                                      worker__tab_num__gt=0).count()
+
         return queryset
 
     @classmethod
