@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Manager
+from django.db import connection
 
 
 class WorkerManager(models.Manager):
@@ -42,8 +43,7 @@ class Department(models.Model):
         Количество активных сотрудников подразделения
         """
         queryset = cls.objects.filter(worker__startwork_date__isnull=False,
-                                      worker__tab_num__gt=0).count()
-        print(queryset)
+                                      worker__tab_num__gt=0).values_list('id', flat=True).count()
         return queryset
 
     @classmethod
@@ -52,8 +52,9 @@ class Department(models.Model):
         """
         Количество всех сотрудников подразделения
         """
-        queryset = cls.objects.filter(worker__department__isnull=False).count()
-
+        queryset = cls.objects.filter(
+            worker__department__isnull=False
+            ).values_list('id', flat=True).count()
         return queryset
 
     class Meta:
