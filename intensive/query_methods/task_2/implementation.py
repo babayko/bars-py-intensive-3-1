@@ -12,16 +12,15 @@ def get_top_customer_in_period(begin, end):
     Returns: возвращает имя покупателя и количество его заказов за указанный период
     """
 
-    queryset = Customer.objects.filter(
-        order__date_formation__gte=begin,
-        order__date_formation__lte=end
+    obj_model = Customer.objects.filter(
+        order__date_formation__range=[begin, end]
     ).annotate(
-        _count=Count('order'),
+        cnt=Count('order'),
         order_before=Min('order__date_formation')
     ).values(
-        'name', '_count'
+        'name', 'cnt'
     ).order_by(
-        '-_count', 'order_before', 'name'
+        '-cnt', 'order_before', 'name'
     ).first()
 
-    return (queryset['name'], queryset['_count']) if queryset else None
+    return (obj_model['name'], obj_model['cnt']) if obj_model else None

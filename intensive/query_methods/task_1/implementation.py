@@ -9,6 +9,6 @@ def get_order_count_by_customer(name):
 
     Returns: число заказов (не может быть отрицательным, но может быть нулевым)
     """
-    queryset = Order.objects.filter(customer__name=name).count()
+    count_of_orderds = Order.objects.filter(customer__name=name).count()
 
-    return queryset
+    return count_of_orderds
