@@ -28,7 +28,7 @@ class WorkerManager(models.Manager):
         list_lists = super().get_queryset().values_list(
             'first_name', 'last_name', 'tab_num', 'department__name'
                            ).order_by('last_name', 'first_name')
-        result = [(num[0] + ' '.join(num[1]) + ', ' + str(num[2]) + ', ' + num[3]) for num in list_lists]
+        result = [(val[0] + ' '.join(val[1]) + ', ' + str(val[2]) + ', ' + val[3]) for val in list_lists]
         return result
 
 
