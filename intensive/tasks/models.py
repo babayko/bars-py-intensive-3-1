@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import Manager
-from django.db import connection
 
 
 class WorkerManager(models.Manager):
@@ -22,10 +21,10 @@ class WorkerManager(models.Manager):
         Строки упорядочены по фамилии и имени сотрудника.
         Каждая строка должна быть в формате вида: Васильев Василий, 888, Подразделение №1
         """
-        list_lists = super().get_queryset().values_list(
+        list_of_nested_lists = super().get_queryset().values_list(
             'first_name', 'last_name', 'tab_num', 'department__name'
-                           ).order_by('last_name', 'first_name')
-        result = [(val[0] + ' '.join(val[1]) + ', ' + str(val[2]) + ', ' + val[3]) for val in list_lists]
+                ).order_by('last_name', 'first_name')
+        result = [(val[0] + ' '.join(val[1]) + ', ' + str(val[2]) + ', ' + val[3]) for val in list_of_nested_lists]
 
         return result
 
@@ -55,7 +54,7 @@ class Department(models.Model):
         """
         queryset = cls.objects.filter(
             worker__department__isnull=False
-            ).values_list('id', flat=True).count()
+            ).values_list('id', flat=True)
 
         return queryset
 
