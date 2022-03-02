@@ -57,6 +57,7 @@ class Order(models.Model):
     date_formation = models.DateField('Дата')
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE, verbose_name='Покупатель')
 
+
     class Meta:
         db_table = 'order'
 

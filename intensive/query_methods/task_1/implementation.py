@@ -1,4 +1,4 @@
-from ..models import *
+from query_methods.models import Order
 
 
 def get_order_count_by_customer(name):
@@ -9,4 +9,6 @@ def get_order_count_by_customer(name):
 
     Returns: число заказов (не может быть отрицательным, но может быть нулевым)
     """
-    raise NotImplementedError
+    queryset = Order.objects.filter(customer__name=name).count()
+
+    return queryset
