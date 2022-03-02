@@ -26,6 +26,7 @@ class WorkerManager(models.Manager):
             'first_name', 'last_name', 'tab_num', 'department__name'
                            ).order_by('last_name', 'first_name')
         result = [(val[0] + ' '.join(val[1]) + ', ' + str(val[2]) + ', ' + val[3]) for val in list_lists]
+
         return result
 
 
@@ -55,6 +56,7 @@ class Department(models.Model):
         queryset = cls.objects.filter(
             worker__department__isnull=False
             ).values_list('id', flat=True).count()
+
         return queryset
 
     class Meta:
