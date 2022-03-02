@@ -54,7 +54,7 @@ class Department(models.Model):
         """
         queryset = cls.objects.filter(
             worker__department__isnull=False
-            ).values_list('id', flat=True)
+            ).values_list('id', flat=True).count()
 
         return queryset
 
