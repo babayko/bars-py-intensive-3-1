@@ -10,27 +10,34 @@ class WorkerManager(models.Manager):
         Переопределенный кверисет возвращающий всех сотрудников без директоров
         """
 
-        raise NotImplementedError
+        return super(WorkerManager, self).get_queryset().exclude(director__isnull=False)
 
 
-class EducationOffice(models.Model):
+class Office(models.Model):
+    """
+    Офис
+    """
+    address = models.TextField('Адрес')
+    mail = models.CharField('Адрес почты', max_length=30, )
+
+    class Meta:
+        abstract = True
+
+
+class EducationOffice(Office):
     """
     Учебный офис
     """
-    address = models.TextField('Адрес')
-    mail = models.CharField('Адрес почты', max_length=30,)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'education_office'
 
 
-class GeneralOffice(models.Model):
+class GeneralOffice(Office):
     """
     Головной офис
     """
-    address = models.TextField('Адрес')
-    mail = models.CharField('Адрес почты', max_length=30)
     name = models.TextField('Название головного офиса ')
 
     class Meta:
@@ -42,7 +49,6 @@ class Department(models.Model):
     Подразделение
     """
     name = models.CharField('Наименование', max_length=30)
-
     education_office = models.ForeignKey(EducationOffice, on_delete=models.SET_NULL, null=True )
     office = models.ForeignKey(GeneralOffice, on_delete=models.SET_NULL, null=True)
 
@@ -54,11 +60,12 @@ class Person(models.Model):
     """
     Физическое лицо
     """
-    first_name = models.CharField('Фамилия', max_length=30)
-    last_name = models.CharField('Имя', max_length=30)
+    first_name = models.CharField('Имя', max_length=30)
+    last_name = models.CharField('Фамилия', max_length=30)
 
     class Meta:
         abstract = True
+        indexes = [models.Index(name='index', fields=['first_name'])]
 
 
 class Worker(Person):
@@ -83,19 +90,25 @@ class OrderedWorker(Worker):
     """
     Модель с  сотрудниками упорядоченными по фамилии и дате приема на работу
     """
+    @classmethod
     @property
-    def startwork_year(self):
+    def startwork_year(cls):
         """
         Получить значение года приема на работу
         """
-        raise NotImplementedError
+        year = cls.objects.values_list('startwork_date__year').order_by('startwork_date').first()[0]
+        return year
+
+    class Meta:
+        ordering = ('last_name', 'startwork_date')
+        proxy = True
 
 
 class Director(Worker):
     """
     Директор
     """
-    # что здесь не хватает?
+    objects = models.Manager()
     grade = models.IntegerField('Оценка', default=1)
 
     class Meta:
