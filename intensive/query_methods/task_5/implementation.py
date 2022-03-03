@@ -1,5 +1,8 @@
-from ..models import *
-
+from query_methods.models import OrderItem, ProductCost
+from django.db.models import Count, Min, Sum, F, Max, Avg
+from decimal import (
+    Decimal,
+)
 
 def get_average_cost_without_product(product, begin, end):
     """Возвращает среднюю стоимость заказов без указанного товара за определенный промежуток времени
@@ -11,4 +14,4 @@ def get_average_cost_without_product(product, begin, end):
 
     Returns: возвращает числовое значение средней стоимости
     """
-    raise NotImplementedError
+
