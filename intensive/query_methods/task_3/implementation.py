@@ -37,8 +37,8 @@ def get_top_order_by_sum_in_period(begin, end):
 
         if cost:
             if product.get(item.order.number):
-                sum = product[item.order.number] + cost.value * final_count_of_items
-                product[item.order.number] = sum
+                amount = product[item.order.number] + cost.value * final_count_of_items
+                product[item.order.number] = amount
             else:
                 product[item.order.number] = cost.value * final_count_of_items
 
