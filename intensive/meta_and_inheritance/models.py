@@ -96,7 +96,7 @@ class OrderedWorker(Worker):
         """
         Получить значение года приема на работу
         """
-        
+
         return cls.objects.values_list('startwork_date__year').order_by('startwork_date').first()[0]
 
     class Meta:
