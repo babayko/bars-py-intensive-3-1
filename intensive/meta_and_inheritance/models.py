@@ -61,11 +61,10 @@ class Person(models.Model):
     Физическое лицо
     """
     first_name = models.CharField('Имя', max_length=30)
-    last_name = models.CharField('Фамилия', max_length=30)
+    last_name = models.CharField('Фамилия', max_length=30, db_index=True)
 
     class Meta:
         abstract = True
-        indexes = [models.Index(name='index', fields=['first_name'])]
 
 
 class Worker(Person):
