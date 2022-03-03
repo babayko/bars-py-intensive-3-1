@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class WorkerManager(models.Manager):
     """
@@ -61,9 +61,10 @@ class Person(models.Model):
     Физическое лицо
     """
     first_name = models.CharField('Имя', max_length=30)
-    last_name = models.CharField('Фамилия', max_length=30, db_index=True)
+    last_name = models.CharField('Фамилия', max_length=30)
 
     class Meta:
+        db_table = 'person'
         abstract = True
 
 
@@ -73,7 +74,7 @@ class Worker(Person):
     """
     objects = WorkerManager()
     objects_all = models.Manager()
-    startwork_date = models.DateField('Дата выхода на работу', null=True, )
+    startwork_date = models.DateField('Дата выхода на работу', null=True, default=timezone.now)
     tab_num = models.IntegerField('Табельный номер', default=0)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
@@ -89,17 +90,16 @@ class OrderedWorker(Worker):
     """
     Модель с  сотрудниками упорядоченными по фамилии и дате приема на работу
     """
-    @classmethod
+
     @property
-    def startwork_year(cls):
+    def startwork_year(self):
         """
         Получить значение года приема на работу
         """
-
-        return cls.objects.values_list('startwork_date__year').order_by('startwork_date').first()[0]
+        return self.startwork_date.year
 
     class Meta:
-        ordering = ('last_name', 'startwork_date')
+        ordering = ('first_name', 'startwork_date')
         proxy = True
 
 
