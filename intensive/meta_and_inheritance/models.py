@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class WorkerManager(models.Manager):
     """
     Менеджер для работы с активными сотрудниками
