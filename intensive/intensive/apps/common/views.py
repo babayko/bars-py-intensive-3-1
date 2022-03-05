@@ -11,6 +11,7 @@ from django.views import (
 )
 
 
+
 class Task1View(View):
     """
     Вывести список всех рецептов. Элементом списка будет являться список, содержащий следующие значения:
@@ -20,14 +21,20 @@ class Task1View(View):
     """
 
     def get(self, request, **kwargs):
-        recipes = list()
+        recipes = list(
+            Recipe.objects.values_list(
+                'userrecipe__user',
+                'title',
+                'description'
+            )
+        )
 
         # Если есть необходимость посмотреть на выполняемые запросы, план запросов через браузер, то нужно
         # раскомментировать строку ниже
-        # return render(request, 'task.html', {'json_data': json.dumps(dict(recipes=recipes), ensure_ascii=False)})
+        return render(request, 'task.html', {'json_data': json.dumps(dict(recipes=recipes), ensure_ascii=False)})
 
         # В тестах проверяется формируемый JSON, поэтому нужно возвращать JsonResponse
-        return JsonResponse(dict(recipes=recipes), json_dumps_params=dict(ensure_ascii=False))
+        #return JsonResponse(dict(recipes=recipes), json_dumps_params=dict(ensure_ascii=False))
 
 
 class Task2View(View):
@@ -47,8 +54,23 @@ class Task2View(View):
     """
 
     def get(self, request, **kwargs):
-        steps = list()
-        products = list()
+        recipe = Recipe.objects.get(id=1)
+
+        steps = list(
+            CookStep.objects.values_list(
+                'title', 'description'
+            ).filter(
+                recipe=recipe)
+            )
+
+        products = list(
+            Recipe.objects.values_list(
+                'product__title',
+                'product__description',
+                'count',
+                'unit__abbreviation'
+            ).filter(recipe=recipe)
+        )
 
         recipe_data = {
             'steps': steps,
@@ -57,14 +79,14 @@ class Task2View(View):
 
         # Если есть необходимость посмотреть на выполняемые запросы, план запросов через браузер, то нужно
         # раскомментировать строки ниже
-        # return render(
-        #     request=request,
-        #     template_name='task.html',
-        #     context={'json_data': json.dumps(dict(recipe_data=recipe_data), ensure_ascii=False, default=str)},
-        # )
+        return render(
+             request=request,
+             template_name='task.html',
+             context={'json_data': json.dumps(dict(recipe_data=recipe_data), ensure_ascii=False, default=str)},
+         )
 
         # В тестах проверяется формируемый JSON, поэтому нужно возвращать JsonResponse
-        return JsonResponse(dict(recipe_data=recipe_data), json_dumps_params=dict(ensure_ascii=False, default=str))
+        #return JsonResponse(dict(recipe_data=recipe_data), json_dumps_params=dict(ensure_ascii=False, default=str))
 
 
 class Task3View(View):
@@ -79,18 +101,27 @@ class Task3View(View):
     """
 
     def get(self, request, **kwargs):
-        recipes = list()
+        recipes = list(
+            Recipe.objects.annotate(
+                likes=Count('vote', filter=F('vote__is_like'))
+            ).values_list(
+                'userrecipe__user',
+                'title',
+                'description',
+                'likes'
+            ).order_by('likes')
+        )
 
         # Если есть необходимость посмотреть на выполняемые запросы, план запросов через браузер, то нужно
         # раскомментировать строки ниже
-        # return render(
-        #     request=request,
-        #     template_name='task.html',
-        #     context={'json_data': json.dumps(dict(recipes=recipes), ensure_ascii=False, default=str)},
-        # )
+        return render(
+             request=request,
+             template_name='task.html',
+             context={'json_data': json.dumps(dict(recipes=recipes), ensure_ascii=False, default=str)},
+         )
 
         # В тестах проверяется формируемый JSON, поэтому нужно возвращать JsonResponse
-        return JsonResponse(dict(recipes=recipes), json_dumps_params=dict(ensure_ascii=False, default=str))
+        #return JsonResponse(dict(recipes=recipes), json_dumps_params=dict(ensure_ascii=False, default=str))
 
 
 class Task4View(View):
@@ -111,9 +142,31 @@ class Task4View(View):
     """
 
     def get(self, request, **kwargs):
-        authors = list()
+        authors = list(
+            CustomUser.objects.filter(
+                author__isnull=False
+            ).annotate(
+                status=Value('Автор'),
+                number_of_recipes=Count('userrecipe')
+            ).values_list(
+                'status',
+                'email',
+                'number_of_recipes'
+            ).order_by('-number_of_recipes')[:3]
+        )
 
-        voters = list()
+        voters = list(
+            CustomUser.objects.filter(
+                author__isnull=True
+            ).annotate(
+                status=Value('Пользователь'),
+                number_of_likes=Count('vote')
+            ).values_list(
+                'status',
+                'email',
+                'number_of_likes'
+            ).order_by('-number_of_likes'[:3])
+        )
 
         data = {
             'authors': authors,
@@ -122,14 +175,14 @@ class Task4View(View):
 
         # Если есть необходимость посмотреть на выполняемые запросы, план запросов через браузер, то нужно
         # раскомментировать строки ниже
-        # return render(
-        #     request=request,
-        #     template_name='task.html',
-        #     context={'json_data': json.dumps(dict(data=data), ensure_ascii=False, default=str)},
-        # )
+        return render(
+             request=request,
+             template_name='task.html',
+             context={'json_data': json.dumps(dict(data=data), ensure_ascii=False, default=str)},
+         )
 
         # В тестах проверяется формируемый JSON, поэтому нужно возвращать JsonResponse
-        return JsonResponse(dict(data=data), json_dumps_params=dict(ensure_ascii=False, default=str))
+        #return JsonResponse(dict(data=data), json_dumps_params=dict(ensure_ascii=False, default=str))
 
 
 class Task5View(View):
@@ -146,17 +199,29 @@ class Task5View(View):
     """
 
     def get(self, request, **kwargs):
-        recipe_products = list()
+        recipe_products = list(
+            RecipeProduct.objects.filter(
+                recipe_id=3,
+            ).annotate(
+                number_of=(F('count') * 5),
+            ).values_list(
+                'recipe__title',
+                'recipe__description',
+                'product__title',
+                'number_of',
+                'unit__abbreviation'
+            )
+        )
 
         # Если есть необходимость посмотреть на выполняемые запросы, план запросов через браузер, то нужно
         # раскомментировать строки ниже
-        # return render(
-        #     request=request,
-        #     template_name='task.html',
-        #     context={'json_data': json.dumps(dict(recipe_products=recipe_products), ensure_ascii=False, default=str)},
-        # )
+        return render(
+             request=request,
+             template_name='task.html',
+             context={'json_data': json.dumps(dict(recipe_products=recipe_products), ensure_ascii=False, default=str)},
+         )
 
         # В тестах проверяется формируемый JSON, поэтому нужно возвращать JsonResponse
-        return JsonResponse(
-            data=dict(recipe_products=recipe_products), json_dumps_params=dict(ensure_ascii=False, default=str),
-        )
+        #return JsonResponse(
+        #    data=dict(recipe_products=recipe_products), json_dumps_params=dict(ensure_ascii=False, default=str),
+        #)

@@ -9,7 +9,7 @@ from common.management.commands.recipes import (
 from common.management.commands.users import (
     create_users,
 )
-from django.test import (
+from common.django.test import (
     TestCase,
 )
 from utils.helpers import (
