@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class WorkerManager(models.Manager):
@@ -10,27 +11,34 @@ class WorkerManager(models.Manager):
         Переопределенный кверисет возвращающий всех сотрудников без директоров
         """
 
-        raise NotImplementedError
+        return super(WorkerManager, self).get_queryset().exclude(director__isnull=False)
 
 
-class EducationOffice(models.Model):
+class Office(models.Model):
+    """
+    Офис
+    """
+    address = models.TextField('Адрес')
+    mail = models.CharField('Адрес почты', max_length=30, )
+
+    class Meta:
+        abstract = True
+
+
+class EducationOffice(Office):
     """
     Учебный офис
     """
-    address = models.TextField('Адрес')
-    mail = models.CharField('Адрес почты', max_length=30,)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'education_office'
 
 
-class GeneralOffice(models.Model):
+class GeneralOffice(Office):
     """
     Головной офис
     """
-    address = models.TextField('Адрес')
-    mail = models.CharField('Адрес почты', max_length=30)
     name = models.TextField('Название головного офиса ')
 
     class Meta:
@@ -42,7 +50,6 @@ class Department(models.Model):
     Подразделение
     """
     name = models.CharField('Наименование', max_length=30)
-
     education_office = models.ForeignKey(EducationOffice, on_delete=models.SET_NULL, null=True )
     office = models.ForeignKey(GeneralOffice, on_delete=models.SET_NULL, null=True)
 
@@ -54,10 +61,11 @@ class Person(models.Model):
     """
     Физическое лицо
     """
-    first_name = models.CharField('Фамилия', max_length=30)
-    last_name = models.CharField('Имя', max_length=30)
+    first_name = models.CharField('Имя', max_length=30)
+    last_name = models.CharField('Фамилия', max_length=30)
 
     class Meta:
+        db_table = 'person'
         abstract = True
 
 
@@ -67,7 +75,7 @@ class Worker(Person):
     """
     objects = WorkerManager()
     objects_all = models.Manager()
-    startwork_date = models.DateField('Дата выхода на работу', null=True, )
+    startwork_date = models.DateField('Дата выхода на работу', null=True, default=timezone.now)
     tab_num = models.IntegerField('Табельный номер', default=0)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
@@ -83,19 +91,24 @@ class OrderedWorker(Worker):
     """
     Модель с  сотрудниками упорядоченными по фамилии и дате приема на работу
     """
+
     @property
     def startwork_year(self):
         """
         Получить значение года приема на работу
         """
-        raise NotImplementedError
+        return self.startwork_date.year
+
+    class Meta:
+        ordering = ('first_name', 'startwork_date')
+        proxy = True
 
 
 class Director(Worker):
     """
     Директор
     """
-    # что здесь не хватает?
+    objects = models.Manager()
     grade = models.IntegerField('Оценка', default=1)
 
     class Meta:
