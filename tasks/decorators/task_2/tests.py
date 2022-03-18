@@ -1,5 +1,4 @@
 import unittest
-
 from tasks.common import factorial, MyException
 from tasks.decorators.task_2.implementation import check_value
 
