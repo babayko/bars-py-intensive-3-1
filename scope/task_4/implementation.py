@@ -4,7 +4,7 @@ def bad_open(file_path, mode):
 
 
 def open_and_close_file(file_path):
-    """Открывет и закрывает файл
+    """Открывает и закрывает файл
 
     Args:
         file_path: путь до файла
