@@ -1,10 +1,15 @@
+from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.template import loader
-from m3.actions import ActionPack, Action, ACD
+from m3.actions import ACD, Action, ActionPack
 from m3_ext.ui.results import ExtUIScriptResult
 from recordpack.recordpack import BaseRecordPack
-from day_12.providers import TestProvider, test_data, GridItem
-from day_12.ui import MasterPanel, MasterWindow, GridWindow, ItemWindow
+
+from day_12.providers import UserProvider
+from day_12.ui import (CreateUserWindow, EditUserWindow, MasterPanel,
+                       MasterWindow, UserWindow)
+
+User = get_user_model()
 
 
 class MasterPack(ActionPack):
@@ -22,7 +27,7 @@ class MasterPack(ActionPack):
         ])
 
         # добавим дочерний пак для элементов грида
-        self.grid_pack = MasterRecordPack()
+        self.grid_pack = UserRecordPack()
         self.subpacks.extend([
             self.grid_pack
         ])
@@ -74,25 +79,27 @@ class GridAction(Action):
 
     def run(self, request, context):
         # создадим окно с гридом
-        win = GridWindow()
+        win = UserWindow()
         # выполним бинд пака и грида на окне
         self.parent.grid_pack.bind_to_grid(request, context, win.grid)
 
         return ExtUIScriptResult(win, context)
 
 
-class MasterRecordPack(BaseRecordPack):
+class UserRecordPack(BaseRecordPack):
     """
     Пример RecordPack
     """
-    url = '/grid'
-    provider = TestProvider(
-        data_source=test_data,
-        object_class=GridItem,
+    url = '/user'
+    provider = UserProvider(
+        data_source=User,
     )
-    edit_window = ItemWindow
-    new_window = ItemWindow
+    edit_window = EditUserWindow
+    new_window = CreateUserWindow
 
     quick_filters = {
-        'name': {'control': {'xtype': 'textfield'}},
+        'username': {'control': {'xtype': 'textfield'}},
+        'first_name': {'control': {'xtype': 'textfield'}},
+        'last_name': {'control': {'xtype': 'textfield'}},
+        'email': {'control': {'xtype': 'textfield'}},
     }
